@@ -43,113 +43,108 @@
   .progresso{height:2px;background:var(--fio);margin:0 20px;overflow:hidden}
   .progresso i{display:block;height:100%;width:0;background:var(--tijolo);transition:width .5s cubic-bezier(.2,.7,.2,1)}
 
-  /* passos */
+  /* passos: coluna estreita no meio da tela, escala de formulário (estilo Typeform) */
   main,main form{flex:1;position:relative;display:flex;flex-direction:column}
-  .passo{display:none;flex:1;flex-direction:column;padding:34px 22px calc(26px + env(safe-area-inset-bottom))}
-  .passo.ativo{display:flex;animation:entra .55s cubic-bezier(.2,.7,.2,1)}
+  .passo{
+    display:none;flex:1;flex-direction:column;justify-content:center;
+    padding:28px 28px calc(36px + env(safe-area-inset-bottom));
+  }
+  .passo > *{width:100%;max-width:330px;margin-left:auto;margin-right:auto}
+  .passo.ativo{display:flex;animation:entra .5s cubic-bezier(.2,.7,.2,1)}
   .passo.volta{animation-name:entraVolta}
-  @keyframes entra{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
-  @keyframes entraVolta{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes entraVolta{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
 
-  .contagem{font-family:"Jost",sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--marrom-suave)}
-  h1,h2{font-family:"Editorial New",serif;font-weight:400;letter-spacing:-.02em;line-height:1.08}
-  h2{font-size:2.05rem;margin-top:12px}
-  .ajuda{margin-top:10px;font-size:1.12rem;line-height:1.45;color:var(--marrom-suave)}
-  .campos{margin-top:28px}
+  .contagem{font-family:"Jost",sans-serif;font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave);margin-bottom:8px}
+  h1,h2{font-family:"Editorial New",serif;font-weight:400;letter-spacing:-.015em;line-height:1.18}
+  h2{font-size:1.42rem}
+  .ajuda{margin-top:8px;font-size:1rem;line-height:1.45;color:var(--marrom-suave)}
+  .campos{margin-top:22px}
 
-  input[type=text],input[type=tel],textarea{
-    width:100%;background:var(--creme-2);border:1px solid var(--fio);border-radius:0;
-    font:inherit;font-size:1.3rem;color:var(--marrom);padding:16px 16px;outline:none;
-    transition:border-color .3s ease,box-shadow .3s ease;-webkit-appearance:none;appearance:none;
+  /* campos de texto: só a linha de baixo */
+  input[type=text],input[type=tel]{
+    width:100%;background:transparent;border:0;border-bottom:1px solid rgba(59,40,28,.3);border-radius:0;
+    font:inherit;font-size:1.2rem;color:var(--marrom);padding:8px 0 9px;outline:none;
+    transition:border-color .3s ease;-webkit-appearance:none;appearance:none;
   }
-  textarea{min-height:150px;resize:vertical;line-height:1.4;font-size:1.18rem}
-  input::placeholder,textarea::placeholder{color:#B4A491}
-  input:focus,textarea:focus{border-color:var(--marrom);box-shadow:0 0 0 3px rgba(59,40,28,.07)}
+  input[type=text]:focus,input[type=tel]:focus{border-bottom-color:var(--marrom)}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;background:rgba(251,247,240,.7);border:1px solid rgba(59,40,28,.2);border-radius:3px;
+    font:inherit;font-size:1.02rem;line-height:1.45;color:var(--marrom);padding:11px 12px;outline:none;transition:border-color .3s ease;
+  }
+  textarea:focus{border-color:var(--marrom)}
+  input::placeholder,textarea::placeholder{color:#B1A08C}
 
-  /* opções */
-  .opcoes{display:flex;flex-direction:column;gap:10px}
+  /* opções com letra, como no Typeform */
+  .opcoes{display:flex;flex-direction:column;gap:8px}
   .opcao{
-    position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;
-    background:var(--creme-2);border:1px solid var(--fio);padding:16px 18px;
-    font:inherit;font-size:1.2rem;line-height:1.25;color:var(--marrom);
-    transition:border-color .25s ease,background .25s ease,transform .25s ease;
+    position:relative;display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;
+    background:rgba(251,247,240,.7);border:1px solid rgba(59,40,28,.2);border-radius:3px;padding:9px 12px 9px 9px;
+    font:inherit;font-size:1rem;line-height:1.3;color:var(--marrom);
+    transition:border-color .2s ease,background .2s ease,transform .2s ease;
   }
-  .opcao::before{
-    content:"";flex-shrink:0;width:18px;height:18px;border-radius:50%;border:1px solid #BFAE97;
-    transition:border-color .25s ease,box-shadow .25s ease,background .25s ease;
-  }
-  .opcao:hover{border-color:#BFAE97}
+  .opcao:hover{border-color:rgba(59,40,28,.45);background:var(--creme-2)}
   .opcao:active{transform:scale(.99)}
-  .opcao[aria-checked=true]{border-color:var(--marrom);background:#FFFDF9}
-  .opcao[aria-checked=true]::before{border-color:var(--tijolo);background:var(--tijolo);box-shadow:inset 0 0 0 3px #FFFDF9}
-  .outro-texto{margin-top:10px;display:none}
-  .outro-texto.on{display:block;animation:entra .4s ease}
+  .opcao .tecla{
+    flex-shrink:0;width:22px;height:22px;display:grid;place-items:center;border:1px solid rgba(59,40,28,.3);border-radius:2px;
+    font-family:"Jost",sans-serif;font-size:.66rem;font-weight:500;color:var(--marrom-suave);background:var(--creme-2);
+    transition:background .2s ease,color .2s ease,border-color .2s ease;
+  }
+  .opcao .ok{margin-left:auto;width:15px;height:15px;opacity:0;transform:scale(.6);transition:opacity .2s ease,transform .2s ease;color:var(--marrom)}
+  .opcao[aria-checked=true]{border-color:var(--marrom);background:#FFFDF9;box-shadow:0 0 0 1px var(--marrom) inset}
+  .opcao[aria-checked=true] .tecla{background:var(--marrom);border-color:var(--marrom);color:var(--creme)}
+  .opcao[aria-checked=true] .ok{opacity:1;transform:none}
+  .opcao.pisca{animation:pisca .28s ease 2}
+  @keyframes pisca{50%{background:var(--creme)}}
+  .outro-texto{margin-top:12px;display:none}
+  .outro-texto.on{display:block;animation:entra .35s ease}
 
   /* consentimento */
-  .consentimento{display:flex;gap:12px;align-items:flex-start;margin-top:22px;font-size:1.05rem;line-height:1.4;color:var(--marrom-suave);cursor:pointer}
-  .consentimento input{flex-shrink:0;width:20px;height:20px;margin-top:2px;accent-color:var(--tijolo)}
+  .consentimento{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:.95rem;line-height:1.4;color:var(--marrom-suave);cursor:pointer}
+  .consentimento input{flex-shrink:0;width:16px;height:16px;margin-top:3px;accent-color:var(--marrom)}
 
-  .erro{min-height:22px;margin-top:10px;font-family:"Jost",sans-serif;font-size:.85rem;color:var(--tijolo)}
+  .erro{min-height:18px;margin-top:10px;font-family:"Jost",sans-serif;font-size:.78rem;color:var(--tijolo)}
+  .erro:empty{min-height:0;margin-top:0}
 
-  /* rodapé dos passos */
-  .acoes{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;gap:10px}
+  /* botões compactos */
+  .acoes{margin-top:22px;display:flex;align-items:center;gap:14px}
   .botao{
-    position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;
-    padding:18px 22px;border:0;cursor:pointer;text-decoration:none;
-    background:linear-gradient(180deg,#43301F 0%,var(--marrom-2) 100%);color:var(--creme);
-    font-family:"Jost",sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
-    box-shadow:0 1px 2px rgba(47,32,22,.2),0 18px 30px -20px rgba(47,32,22,.7);
-    transition:transform .3s ease,opacity .3s ease;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 18px;border:0;border-radius:3px;cursor:pointer;text-decoration:none;
+    background:var(--marrom);color:var(--creme);
+    font-family:"Jost",sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.08em;
+    box-shadow:0 8px 18px -12px rgba(47,32,22,.8);transition:background .2s ease,transform .2s ease,opacity .2s ease;
   }
-  .botao::before{content:"";position:absolute;inset:5px;border:1px solid rgba(243,235,221,.16);pointer-events:none}
-  .botao:active{transform:scale(.99)}
+  .botao:hover{background:var(--marrom-2)}
+  .botao:active{transform:scale(.98)}
   .botao[disabled]{opacity:.55;cursor:default}
-  .botao svg{width:15px;height:15px}
-  .pular{background:none;border:0;cursor:pointer;padding:10px;font-family:"Jost",sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave)}
+  .botao svg{width:14px;height:14px}
+  .dica{font-family:"Jost",sans-serif;font-size:.68rem;color:var(--marrom-suave)}
+  .dica b{font-weight:500}
+  @media (hover:none){.dica{display:none}}
+  .pular{background:none;border:0;cursor:pointer;padding:6px 2px;font-family:"Jost",sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.06em;color:var(--marrom-suave);text-decoration:underline;text-underline-offset:3px}
 
   /* abertura */
-  .capa{
-    position:relative;height:34vh;min-height:220px;margin:-34px -22px 0;
-    background:url(/img/atendimento.jpg) 70% 55%/cover;filter:sepia(.2) saturate(.85);
-  }
-  .abertura h1{font-size:2.35rem;margin-top:26px}
-  .abertura .ajuda{font-size:1.18rem}
-  .detalhes{margin-top:22px;display:flex;flex-direction:column;gap:8px;font-family:"Jost",sans-serif;font-size:.78rem;letter-spacing:.06em;color:var(--marrom-suave)}
-  .detalhes span{display:flex;align-items:center;gap:10px}
-  .detalhes span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--tijolo);opacity:.8}
+  .abertura{justify-content:flex-start}
+  .abertura > .capa{max-width:none;width:auto;margin:-28px -28px 0}
+  .capa{height:30vh;min-height:190px;background:url(/img/atendimento.jpg) 70% 55%/cover;filter:sepia(.2) saturate(.85)}
+  .abertura h1{font-size:1.85rem;margin-top:28px}
+  .abertura .ajuda{font-size:1.02rem}
+  .detalhes{margin-top:16px;display:flex;flex-direction:column;gap:6px;font-family:"Jost",sans-serif;font-size:.74rem;letter-spacing:.03em;color:var(--marrom-suave)}
+  .detalhes span{display:flex;align-items:center;gap:9px}
+  .detalhes span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--tijolo)}
 
   /* final */
-  .fim{justify-content:center;text-align:center;align-items:center}
-  .fim .selo{width:64px;height:64px;border-radius:50%;border:1px solid var(--fio);display:grid;place-items:center;color:var(--tijolo);margin-bottom:22px;background:var(--creme-2)}
-  .fim .selo svg{width:26px;height:26px}
-  .fim h2{font-size:2.3rem}
-  .fim .ajuda{max-width:300px}
-  .fim a.link{margin-top:26px;font-family:"Jost",sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
-
-  /* layout centralizado */
-  .passo{justify-content:center;text-align:center;padding:30px 26px calc(30px + env(safe-area-inset-bottom))}
-  .passo > *{width:100%;max-width:360px;margin-left:auto;margin-right:auto}
-  .abertura{justify-content:flex-start}
-  .abertura > .capa{max-width:none;width:auto;margin:-30px -26px 0}
-  .contagem{margin-bottom:-2px}
-  h2{margin-top:0}
-  .ajuda{margin-top:12px}
-  .campos{margin-top:30px}
-  input[type=text],input[type=tel],textarea{text-align:center}
-  textarea{text-align:left}
-  .opcao{justify-content:center;text-align:center;padding:17px 18px;transition:border-color .25s ease,background .25s ease,color .25s ease,transform .25s ease}
-  .opcao::before{display:none}
-  .opcao[aria-checked=true]{background:var(--marrom);border-color:var(--marrom);color:var(--creme)}
-  .consentimento{justify-content:center;text-align:left;max-width:320px;margin:24px auto 0}
-  .erro{text-align:center}
-  .acoes{margin-top:28px;padding-top:0}
-  .detalhes{align-items:center}
-  .abertura .acoes{margin-top:30px}
-  h2.longa{font-size:1.7rem;line-height:1.12}
+  .fim{text-align:center;align-items:center}
+  .fim .selo{width:48px;height:48px;border-radius:50%;border:1px solid var(--fio);display:grid;place-items:center;color:var(--tijolo);margin-bottom:16px;background:var(--creme-2)}
+  .fim .selo svg{width:20px;height:20px}
+  .fim > .selo{width:48px}
+  .fim h2{font-size:1.6rem}
+  .fim a.link{margin-top:18px;width:auto;font-family:"Jost",sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
 
   .mel{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-  @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on{animation:none}}
-  @media (max-width:360px){h2{font-size:1.8rem}.abertura h1{font-size:2rem}}
+  @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on,.opcao.pisca{animation:none}}
+  @media (min-width:700px){h2{font-size:1.6rem}.passo > *{max-width:380px}}
 </style>
 </head>
 <body>
@@ -183,7 +178,7 @@
         <h2>Como posso te chamar?</h2>
         <div class="campos"><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" maxlength="80" enterkeyhint="next"></div>
         <p class="erro" aria-live="polite"></p>
-        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+        <div class="acoes"><button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><span class="dica">ou aperte <b>Enter ↵</b></span></div>
       </section>
 
       <section class="passo" data-passo="whatsapp">
@@ -191,7 +186,7 @@
         <p class="ajuda">Com DDD. Se você mora fora do Brasil, comece com + e o código do país.</p>
         <div class="campos"><input type="tel" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="24" enterkeyhint="next"></div>
         <p class="erro" aria-live="polite"></p>
-        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+        <div class="acoes"><button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><span class="dica">ou aperte <b>Enter ↵</b></span></div>
       </section>
 
       <section class="passo" data-passo="tema">
@@ -207,7 +202,7 @@
           <div class="outro-texto"><input type="text" name="tema_outro" placeholder="Escreva aqui" maxlength="160"></div>
         </div>
         <p class="erro" aria-live="polite"></p>
-        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+        <div class="acoes"><button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><span class="dica">ou aperte <b>Enter ↵</b></span></div>
       </section>
 
       <section class="passo" data-passo="relato">
@@ -217,7 +212,7 @@
         <div class="campos"><textarea name="relato" maxlength="1500" placeholder="Escreva com calma…"></textarea></div>
         <p class="erro" aria-live="polite"></p>
         <div class="acoes">
-          <button class="botao" type="button" data-avancar>Continuar</button>
+          <button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
           <button class="pular" type="button" data-pular>Pular</button>
         </div>
       </section>
@@ -247,7 +242,7 @@
       </section>
 
       <section class="passo" data-passo="contato">
-        <h2 class="longa">Os detalhes de valores e horários eu te passo pelo WhatsApp. Posso te chamar para conversarmos?</h2>
+        <h2>Os detalhes de valores e horários eu te passo pelo WhatsApp. Posso te chamar para conversarmos?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="contato">
             <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="conversar" data-sem-avanco>Pode, sim</button>
@@ -345,17 +340,35 @@
       const grupo = op.closest('.opcoes');
       grupo.querySelectorAll('.opcao').forEach(o => o.setAttribute('aria-checked', o === op));
       dados[grupo.dataset.campo] = op.dataset.valor;
+      op.classList.remove('pisca'); void op.offsetWidth; op.classList.add('pisca');
       erro(passos[atual], '');
       if (grupo.dataset.campo === 'tema') {
         const outro = form.querySelector('.outro-texto');
         outro.classList.toggle('on', op.dataset.valor === 'outro');
         if (op.dataset.valor === 'outro') form.tema_outro.focus();
       }
-      if (!op.hasAttribute('data-sem-avanco')) setTimeout(avancar, 280);
+      if (!op.hasAttribute('data-sem-avanco')) setTimeout(avancar, 520);
     }
   });
 
   voltar.addEventListener('click', () => { if (atual > 0) mostrar(atual - 1, true); });
+
+  // letras A, B, C… e o check nas opções, como no Typeform
+  const CHECK = '<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  form.querySelectorAll('.opcoes').forEach(g => g.querySelectorAll('.opcao').forEach((o, i) => {
+    o.insertAdjacentHTML('afterbegin', '<span class="tecla">' + String.fromCharCode(65 + i) + '</span>');
+    o.insertAdjacentHTML('beforeend', CHECK);
+  }));
+
+  // no computador, apertar a letra escolhe a opção
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target.matches('input,textarea')) return;
+    const grupo = passos[atual].querySelector('.opcoes');
+    if (!grupo || e.key.length !== 1) return;
+    const i = e.key.toUpperCase().charCodeAt(0) - 65;
+    const op = grupo.querySelectorAll('.opcao')[i];
+    if (op) { e.preventDefault(); op.click(); }
+  });
 
   // Enter avança nos campos de texto
   form.addEventListener('keydown', e => {
