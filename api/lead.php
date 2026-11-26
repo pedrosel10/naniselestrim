@@ -52,10 +52,11 @@ try {
     $pdo = db();
     $ip = ip_hash();
 
-    // Limite simples: no máximo 5 envios por hora do mesmo endereço
+    // Limite: no máximo 20 envios por hora do mesmo endereço (operadoras de celular
+    // compartilham o mesmo endereço entre muitos clientes, então não dá para ser baixo)
     $q = $pdo->prepare('SELECT COUNT(*) FROM leads WHERE ip_hash = ? AND criado_em > ?');
     $q->execute([$ip, date('Y-m-d H:i:s', time() - 3600)]);
-    if ((int) $q->fetchColumn() >= 5) responder(429, ['ok' => false, 'erro' => 'limite']);
+    if ((int) $q->fetchColumn() >= 20) responder(429, ['ok' => false, 'erro' => 'limite']);
 
     $q = $pdo->prepare('INSERT INTO leads
         (criado_em, atualizado_em, nome, whatsapp, tema, tema_outro, relato, acompanhamento, quando, contato, origem, ip_hash)

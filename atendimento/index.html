@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#F3EBDD">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   @font-face{font-family:"Editorial New";src:url(/fonts/PPEditorialNew-Regular.otf) format("opentype");font-weight:400;font-display:swap}
   :root{
@@ -19,7 +19,7 @@
   html{-webkit-text-size-adjust:100%}
   body{
     background:var(--creme);color:var(--marrom);min-height:100vh;min-height:100dvh;
-    font-family:"EB Garamond",Georgia,serif;-webkit-font-smoothing:antialiased;
+    font-family:"Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
   }
   body::after{
     content:"";position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
@@ -27,12 +27,18 @@
   }
   .app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 
-  /* topo */
+  /* topo: a Nani "acompanha" a conversa com o rostinho ao lado do nome */
   .topo{
     position:sticky;top:0;z-index:5;background:var(--creme);
     display:grid;grid-template-columns:40px 1fr 40px;align-items:center;padding:14px 16px 12px;
   }
-  .topo a.marca{grid-column:2;text-align:center;font-family:"Editorial New",serif;font-size:1.15rem;color:var(--marrom);text-decoration:none;letter-spacing:-.01em}
+  .marca{
+    grid-column:2;justify-self:center;display:inline-flex;align-items:center;gap:9px;
+    font-family:"Editorial New",serif;font-size:1.15rem;color:var(--marrom);text-decoration:none;letter-spacing:-.01em;
+  }
+  .marca img{width:26px;height:26px;border-radius:50%;object-fit:cover;filter:sepia(.16);animation:surge .4s ease}
+  .app[data-passo=inicio] .marca img{display:none}
+  @keyframes surge{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
   .voltar{
     width:40px;height:40px;border:0;background:none;color:var(--marrom);display:grid;place-items:center;cursor:pointer;
     border-radius:50%;transition:opacity .3s ease,background .3s ease;
@@ -43,37 +49,40 @@
   .progresso{height:2px;background:var(--fio);margin:0 20px;overflow:hidden}
   .progresso i{display:block;height:100%;width:0;background:var(--tijolo);transition:width .5s cubic-bezier(.2,.7,.2,1)}
 
-  /* passos: coluna estreita no meio da tela, escala de formulário (estilo Typeform) */
+  /* passos: coluna estreita, escala de formulário (estilo Typeform) */
   main,main form{flex:1;position:relative;display:flex;flex-direction:column}
-  /* a animação de entrada desloca a pergunta alguns pixels: sem isto, a página ganha
-     altura extra por um instante e a barra de rolagem pisca */
-  main{overflow:hidden;overflow:clip}
   .passo{
     display:none;flex:1;flex-direction:column;justify-content:center;
     padding:28px 28px calc(36px + env(safe-area-inset-bottom));
   }
   .passo > *{width:100%;max-width:330px;margin-left:auto;margin-right:auto}
-  .passo.ativo{display:flex;animation:entra .5s cubic-bezier(.2,.7,.2,1)}
-  .passo.volta{animation-name:entraVolta}
-  @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  @keyframes entraVolta{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+  /* entra crescendo de leve: não desloca nada para baixo, então a página nunca
+     ganha altura extra e a barra de rolagem não pisca */
+  .passo.ativo{display:flex;animation:entra .45s cubic-bezier(.2,.7,.2,1)}
+  @keyframes entra{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
 
-  .contagem{font-family:"Jost",sans-serif;font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave);margin-bottom:8px}
+  /* no celular, as perguntas ficam um pouco acima do centro e sempre na mesma altura:
+     o teclado não cobre o campo e nada "pula" de uma pergunta para a outra */
+  @media (max-width:699px){
+    .passo:not(.abertura):not(.fim){justify-content:flex-start;padding-top:clamp(28px,12vh,110px)}
+  }
+
+  .contagem{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave);margin-bottom:8px}
   h1,h2{font-family:"Editorial New",serif;font-weight:400;letter-spacing:-.015em;line-height:1.18}
   h2{font-size:1.42rem}
-  .ajuda{margin-top:8px;font-size:1rem;line-height:1.45;color:var(--marrom-suave)}
+  .ajuda{margin-top:8px;font-size:.92rem;line-height:1.5;color:var(--marrom-suave)}
   .campos{margin-top:22px}
 
   /* campos de texto: só a linha de baixo */
   input[type=text],input[type=tel]{
     width:100%;background:transparent;border:0;border-bottom:1px solid rgba(59,40,28,.3);border-radius:0;
-    font:inherit;font-size:1.2rem;color:var(--marrom);padding:8px 0 9px;outline:none;
+    font:inherit;font-size:1.05rem;color:var(--marrom);padding:8px 0 9px;outline:none;
     transition:border-color .3s ease;-webkit-appearance:none;appearance:none;
   }
   input[type=text]:focus,input[type=tel]:focus{border-bottom-color:var(--marrom)}
   textarea{
     width:100%;min-height:110px;resize:vertical;background:rgba(251,247,240,.7);border:1px solid rgba(59,40,28,.2);border-radius:3px;
-    font:inherit;font-size:1.02rem;line-height:1.45;color:var(--marrom);padding:11px 12px;outline:none;transition:border-color .3s ease;
+    font:inherit;font-size:.92rem;line-height:1.45;color:var(--marrom);padding:11px 12px;outline:none;transition:border-color .3s ease;
   }
   textarea:focus{border-color:var(--marrom)}
   input::placeholder,textarea::placeholder{color:#B1A08C}
@@ -83,14 +92,14 @@
   .opcao{
     position:relative;display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;
     background:rgba(251,247,240,.7);border:1px solid rgba(59,40,28,.2);border-radius:3px;padding:9px 12px 9px 9px;
-    font:inherit;font-size:1rem;line-height:1.3;color:var(--marrom);
+    font:inherit;font-size:.9rem;line-height:1.3;color:var(--marrom);
     transition:border-color .2s ease,background .2s ease,transform .2s ease;
   }
   .opcao:hover{border-color:rgba(59,40,28,.45);background:var(--creme-2)}
   .opcao:active{transform:scale(.99)}
   .opcao .tecla{
     flex-shrink:0;width:22px;height:22px;display:grid;place-items:center;border:1px solid rgba(59,40,28,.3);border-radius:2px;
-    font-family:"Jost",sans-serif;font-size:.66rem;font-weight:500;color:var(--marrom-suave);background:var(--creme-2);
+    font-size:.66rem;font-weight:500;color:var(--marrom-suave);background:var(--creme-2);
     transition:background .2s ease,color .2s ease,border-color .2s ease;
   }
   .opcao .ok{margin-left:auto;width:15px;height:15px;opacity:0;transform:scale(.6);transition:opacity .2s ease,transform .2s ease;color:var(--marrom)}
@@ -103,10 +112,10 @@
   .outro-texto.on{display:block;animation:entra .35s ease}
 
   /* consentimento */
-  .consentimento{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:.95rem;line-height:1.4;color:var(--marrom-suave);cursor:pointer}
+  .consentimento{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:.84rem;line-height:1.4;color:var(--marrom-suave);cursor:pointer}
   .consentimento input{flex-shrink:0;width:16px;height:16px;margin-top:3px;accent-color:var(--marrom)}
 
-  .erro{min-height:18px;margin-top:10px;font-family:"Jost",sans-serif;font-size:.78rem;color:var(--tijolo)}
+  .erro{min-height:18px;margin-top:10px;font-size:.78rem;color:var(--tijolo)}
   .erro:empty{min-height:0;margin-top:0}
 
   /* botões compactos */
@@ -122,42 +131,63 @@
   .botao:active{transform:scale(.98)}
   .botao[disabled]{opacity:.55;cursor:default}
   .botao svg{width:14px;height:14px}
-  .dica{font-family:"Jost",sans-serif;font-size:.68rem;color:var(--marrom-suave)}
+  .dica{font-size:.68rem;color:var(--marrom-suave)}
   .dica b{font-weight:500}
   @media (hover:none){.dica{display:none}}
   .pular{background:none;border:0;cursor:pointer;padding:6px 2px;font-family:"Jost",sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.06em;color:var(--marrom-suave);text-decoration:underline;text-underline-offset:3px}
 
-  /* abertura */
-  .abertura{justify-content:flex-start}
-  .abertura > .capa{max-width:none;width:auto;margin:-28px -28px 0}
-  .capa{height:30vh;min-height:190px;background:url(/img/atendimento.jpg) 70% 55%/cover;filter:sepia(.2) saturate(.85)}
-  .abertura h1{font-size:1.85rem;margin-top:28px}
-  .abertura .ajuda{font-size:1.02rem}
-  .detalhes{margin-top:16px;display:flex;flex-direction:column;gap:6px;font-family:"Jost",sans-serif;font-size:.74rem;letter-spacing:.03em;color:var(--marrom-suave)}
+  /* abertura: a Nani se apresenta */
+  .abertura{text-align:center;align-items:center}
+  .abertura > *{max-width:320px}
+  .abertura > .retrato{width:100px}
+  .retrato{height:100px;border-radius:50%;padding:4px;border:1px solid var(--fio);background:var(--creme-2);margin-bottom:20px;box-shadow:0 14px 30px -22px rgba(59,40,28,.6)}
+  .retrato img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;filter:sepia(.16) contrast(1.03)}
+  .abertura h1{font-size:1.85rem}
+  .ola{margin-top:10px;font-size:.95rem;line-height:1.55;color:var(--marrom-suave)}
+  .abertura > .detalhes{width:auto}
+  .detalhes{margin-top:18px;display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:.74rem;letter-spacing:.03em;color:var(--marrom-suave);text-align:left}
   .detalhes span{display:flex;align-items:center;gap:9px}
   .detalhes span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--tijolo)}
+  .abertura .acoes{justify-content:center;margin-top:26px}
 
   /* final */
   .fim{text-align:center;align-items:center}
-  .fim .selo{width:48px;height:48px;border-radius:50%;border:1px solid var(--fio);display:grid;place-items:center;color:var(--tijolo);margin-bottom:16px;background:var(--creme-2)}
-  .fim .selo svg{width:20px;height:20px}
   .fim > .selo{width:48px}
+  .selo{height:48px;border-radius:50%;border:1px solid var(--fio);display:grid;place-items:center;color:var(--tijolo);margin-bottom:16px;background:var(--creme-2)}
+  .selo svg{width:20px;height:20px}
   .fim h2{font-size:1.6rem}
-  .fim .voltar-links{margin-top:24px;width:auto}
-  .fim a.link{margin-top:16px;width:auto;font-family:"Jost",sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
+  .fim .ajuda{margin-top:6px}
+  .proximos{margin-top:22px;text-align:left;background:rgba(251,247,240,.75);border:1px solid rgba(59,40,28,.14);border-radius:4px;padding:15px 16px 3px}
+  .proximos p{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave);margin-bottom:12px}
+  .proximos ol{list-style:none}
+  .proximos li{display:flex;gap:11px;align-items:flex-start;padding-bottom:12px;font-size:.88rem;line-height:1.45}
+  .proximos li b{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--marrom);color:var(--creme);font-size:.64rem;font-weight:500;margin-top:1px}
+  .fim > .voltar-links{width:auto;margin-top:24px}
+  .fim > a.link{width:auto;margin-top:16px;font-size:.7rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
+
+  /* aviso de respostas recuperadas */
+  .retomada{
+    position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));z-index:20;
+    width:max-content;max-width:calc(100vw - 32px);display:flex;align-items:center;gap:14px;
+    background:var(--marrom);color:var(--creme);font-size:.78rem;line-height:1.35;padding:11px 15px;border-radius:4px;
+    box-shadow:0 14px 30px -16px rgba(47,32,22,.8);
+    opacity:0;transform:translate(-50%,10px);pointer-events:none;transition:opacity .35s ease,transform .35s ease;
+  }
+  .retomada.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .retomada button{flex-shrink:0;background:none;border:0;cursor:pointer;color:var(--tijolo-claro);font:inherit;font-weight:500;text-decoration:underline;text-underline-offset:3px}
 
   .mel{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-  @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on,.opcao.pisca{animation:none}}
+  @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on,.opcao.pisca,.marca img{animation:none}}
   @media (min-width:700px){h2{font-size:1.6rem}.passo > *{max-width:380px}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" data-passo="inicio">
   <header class="topo">
     <button class="voltar" type="button" aria-label="Voltar" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
     </button>
-    <a class="marca" href="/">Nani Selestrim</a>
+    <a class="marca" href="/"><img src="/img/nani-rosto.jpg" alt="" width="26" height="26">Nani Selestrim</a>
   </header>
   <div class="progresso" aria-hidden="true"><i></i></div>
 
@@ -167,9 +197,9 @@
 
       <!-- abertura -->
       <section class="passo abertura ativo" data-passo="inicio">
-        <div class="capa" aria-hidden="true"></div>
-        <h1>Seja atendido por mim</h1>
-        <p class="ajuda">Algumas perguntas rápidas para eu entender o seu momento antes de conversarmos.</p>
+        <div class="retrato"><img src="/img/nani-rosto.jpg" alt="Nani Selestrim" width="92" height="92"></div>
+        <h1>Vamos conversar?</h1>
+        <p class="ola">Oi, eu sou a Nani. Antes da nossa conversa, quero entender um pouco do seu momento.</p>
         <div class="detalhes">
           <span>Consultas online, individuais</span>
           <span>Leva menos de um minuto</span>
@@ -180,13 +210,13 @@
 
       <section class="passo" data-passo="nome">
         <h2>Como posso te chamar?</h2>
-        <div class="campos"><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" maxlength="80" enterkeyhint="next"></div>
+        <div class="campos"><input type="text" name="nome" autocomplete="name" autocapitalize="words" placeholder="Seu nome" maxlength="80" enterkeyhint="next"></div>
         <p class="erro" aria-live="polite"></p>
         <div class="acoes"><button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><span class="dica">ou aperte <b>Enter ↵</b></span></div>
       </section>
 
       <section class="passo" data-passo="whatsapp">
-        <h2>Qual o seu WhatsApp?</h2>
+        <h2><span data-saudacao></span>Qual o seu WhatsApp?</h2>
         <p class="ajuda">Com DDD. Se você mora fora do Brasil, comece com + e o código do país.</p>
         <div class="campos"><input type="tel" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="24" enterkeyhint="next"></div>
         <p class="erro" aria-live="polite"></p>
@@ -194,7 +224,7 @@
       </section>
 
       <section class="passo" data-passo="tema">
-        <h2>O que te traz até aqui?</h2>
+        <h2>O que te traz até aqui<span data-vocativo></span>?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="tema">
             <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="autodominio">Ansiedade, irritação ou falta de autodomínio</button>
@@ -203,7 +233,7 @@
             <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="afetivo">Questões afetivas e emocionais</button>
             <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="outro" data-sem-avanco>Outro</button>
           </div>
-          <div class="outro-texto"><input type="text" name="tema_outro" placeholder="Escreva aqui" maxlength="160"></div>
+          <div class="outro-texto"><input type="text" name="tema_outro" placeholder="Escreva aqui" maxlength="160" enterkeyhint="next"></div>
         </div>
         <p class="erro" aria-live="polite"></p>
         <div class="acoes"><button class="botao" type="button" data-avancar>OK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><span class="dica">ou aperte <b>Enter ↵</b></span></div>
@@ -264,7 +294,15 @@
       <section class="passo fim" data-passo="fim">
         <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
         <h2>Obrigada, <span data-nome></span>.</h2>
-        <p class="ajuda">Recebi suas respostas. Vou te chamar pelo WhatsApp em breve.</p>
+        <p class="ajuda">Recebi suas respostas.</p>
+        <div class="proximos">
+          <p>O que acontece agora</p>
+          <ol>
+            <li><b>1</b><span>Leio suas respostas com atenção.</span></li>
+            <li><b>2</b><span data-proximo>Te chamo pelo WhatsApp para conversarmos.</span></li>
+            <li><b>3</b><span>Se fizer sentido para você, marcamos a primeira consulta.</span></li>
+          </ol>
+        </div>
         <a class="botao voltar-links" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Voltar aos links</a>
         <a class="link" href="https://instagram.com/naniselestrim">@naniselestrim</a>
       </section>
@@ -272,34 +310,156 @@
   </main>
 </div>
 
+<div class="retomada" role="status" aria-live="polite">
+  <span>Guardei suas respostas. Continuando de onde você parou.</span>
+  <button type="button" data-recomecar>Recomeçar</button>
+</div>
+
 <script>
 (() => {
   const form = document.getElementById('form');
+  const app = document.querySelector('.app');
   const passos = [...form.querySelectorAll('.passo')];
   const perguntas = passos.filter(p => !['inicio', 'fim'].includes(p.dataset.passo));
+  const FIM = passos.findIndex(p => p.dataset.passo === 'fim');
   const barra = document.querySelector('.progresso i');
   const voltar = document.querySelector('.voltar');
-  const dados = {};
-  const abertoEm = Date.now();
-  let atual = 0, timerAvanco = null;
+  const retomada = document.querySelector('.retomada');
+  const toque = matchMedia('(hover: none)').matches; // celular e tablet
+  const CHAVE = 'nani-atendimento-v1';
+  const VALIDADE = 3 * 24 * 60 * 60 * 1000; // respostas guardadas valem 3 dias
+
+  let dados = {};
+  let abertoEm = Date.now();
+  let atual = 0, timerAvanco = null, timerSalvar = null, enviado = false;
 
   const params = new URLSearchParams(location.search);
   let refHost = ''; try { refHost = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
-  dados.origem = params.get('origem') || params.get('utm_source') || (refHost && !refHost.endsWith('naniselestrim.com') ? refHost : (refHost ? 'link-na-bio' : 'direto'));
+  const origem = params.get('origem') || params.get('utm_source') || (refHost && !refHost.endsWith('naniselestrim.com') ? refHost : (refHost ? 'link-na-bio' : 'direto'));
+  dados.origem = origem;
 
-  function mostrar(i, voltando) {
-    passos[atual].classList.remove('ativo', 'volta');
+  /* ---------- telas ---------- */
+
+  function mostrar(i) {
+    passos[atual].classList.remove('ativo');
     atual = i;
     const p = passos[atual];
-    p.classList.toggle('volta', !!voltando);
     p.classList.add('ativo');
+    app.dataset.passo = p.dataset.passo;
     const n = perguntas.indexOf(p);
-    barra.style.width = p.dataset.passo === 'fim' ? '100%' : (n < 0 ? '0%' : ((n + 1) / (perguntas.length + 1) * 100) + '%');
-    voltar.hidden = atual === 0 || p.dataset.passo === 'fim';
+    barra.style.width = i === FIM ? '100%' : (n < 0 ? '0%' : ((n + 1) / (perguntas.length + 1) * 100) + '%');
+    voltar.hidden = atual === 0 || i === FIM;
     window.scrollTo(0, 0);
-    const campo = p.querySelector('input[type=text]:not(.mel):not([name=tema_outro]),input[type=tel],textarea');
-    if (campo && matchMedia('(hover:hover)').matches) setTimeout(() => campo.focus(), 250);
+    focar(p);
+    if (i !== FIM) salvar();
   }
+
+  // Põe o cursor no campo na mesma hora do toque (e não depois de uma pausa):
+  // é isso que faz o celular abrir o teclado sozinho. No celular, o relato (opcional)
+  // não abre o teclado, para não esconder o "Pular".
+  function focar(p) {
+    const campo = p.querySelector('input[name=nome],input[name=whatsapp]') || (!toque && p.querySelector('textarea'));
+    if (campo) { try { campo.focus({ preventScroll: true }); } catch (e) { campo.focus(); } }
+    else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+
+  // Cada pergunta vira um passo no histórico do navegador:
+  // o "voltar" do celular volta uma pergunta em vez de sair do formulário.
+  function irPara(i) {
+    history.pushState({ passo: i }, '');
+    mostrar(i);
+  }
+
+  function avancar() {
+    clearTimeout(timerAvanco);
+    if (validar(passos[atual])) irPara(atual + 1);
+  }
+
+  addEventListener('popstate', e => {
+    clearTimeout(timerAvanco);
+    if (enviado) { location.replace('/'); return; } // depois de enviar, voltar leva aos links
+    const alvo = e.state && typeof e.state.passo === 'number' ? Math.min(e.state.passo, FIM - 1) : 0;
+    if (alvo > atual) {
+      // "avançar" do navegador: só passa pelas perguntas já respondidas
+      for (let i = atual; i < alvo; i++) {
+        if (!validar(passos[i])) { if (i !== atual) mostrar(i); history.go(i - alvo); return; }
+      }
+    }
+    mostrar(alvo);
+  });
+
+  voltar.addEventListener('click', () => {
+    clearTimeout(timerAvanco);
+    if (atual === 0) return;
+    if (history.state && history.state.passo === atual) history.back();
+    else mostrar(atual - 1);
+  });
+
+  /* ---------- nome da pessoa nas perguntas ---------- */
+
+  function primeiroNome() {
+    const n = (dados.nome || '').trim().split(/\s+/)[0] || '';
+    if (!n) return '';
+    const tudoIgual = n === n.toLowerCase() || n === n.toUpperCase();
+    return tudoIgual ? n.charAt(0).toUpperCase() + n.slice(1).toLowerCase() : n;
+  }
+
+  function personalizar() {
+    const p = primeiroNome();
+    form.querySelectorAll('[data-saudacao]').forEach(el => { el.textContent = p ? 'Prazer, ' + p + '! ' : ''; });
+    form.querySelectorAll('[data-vocativo]').forEach(el => { el.textContent = p ? ', ' + p : ''; });
+    form.querySelectorAll('[data-nome]').forEach(el => { el.textContent = p; });
+    const prox = form.querySelector('[data-proximo]');
+    if (prox) prox.textContent = dados.contato === 'informacoes'
+      ? 'Te envio pelo WhatsApp os valores e os horários.'
+      : 'Te chamo pelo WhatsApp para conversarmos.';
+  }
+
+  /* ---------- respostas guardadas no aparelho da pessoa ---------- */
+
+  function salvar() {
+    if (enviado) return;
+    try {
+      localStorage.setItem(CHAVE, JSON.stringify({
+        em: Date.now(), abertoEm, passo: atual, dados,
+        campos: { nome: form.nome.value, whatsapp: form.whatsapp.value, tema_outro: form.tema_outro.value, relato: form.relato.value }
+      }));
+    } catch (e) {}
+  }
+
+  function apagar() { try { localStorage.removeItem(CHAVE); } catch (e) {} }
+
+  function lerSalvo() {
+    try {
+      const s = JSON.parse(localStorage.getItem(CHAVE) || 'null');
+      if (s && Date.now() - s.em < VALIDADE && s.passo > 0 && s.passo < FIM) return s;
+    } catch (e) {}
+    apagar();
+    return null;
+  }
+
+  function restaurar(s) {
+    dados = Object.assign({}, s.dados || {});
+    if (!dados.origem) dados.origem = origem;
+    if (s.abertoEm) abertoEm = s.abertoEm;
+    Object.keys(s.campos || {}).forEach(k => {
+      if (form.elements[k] && typeof s.campos[k] === 'string') form.elements[k].value = s.campos[k];
+    });
+    form.querySelectorAll('.opcoes').forEach(g => g.querySelectorAll('.opcao').forEach(o => {
+      o.setAttribute('aria-checked', String(dados[g.dataset.campo] === o.dataset.valor));
+    }));
+    form.querySelector('.outro-texto').classList.toggle('on', dados.tema === 'outro');
+    personalizar();
+  }
+
+  form.addEventListener('input', () => { clearTimeout(timerSalvar); timerSalvar = setTimeout(salvar, 400); });
+
+  retomada.querySelector('[data-recomecar]').addEventListener('click', () => {
+    apagar();
+    location.replace(location.pathname + location.search);
+  });
+
+  /* ---------- validação ---------- */
 
   function erro(p, msg) { const el = p.querySelector('.erro'); if (el) el.textContent = msg || ''; }
 
@@ -312,6 +472,7 @@
       const v = form.nome.value.trim();
       if (v.length < 2) return erro(p, 'Me diga como posso te chamar.'), false;
       dados.nome = v;
+      personalizar();
     }
     if (nome === 'whatsapp') {
       const v = form.whatsapp.value.trim(), d = digitos(v);
@@ -335,32 +496,29 @@
     return true;
   }
 
-  function avancar() { if (validar(passos[atual])) mostrar(atual + 1); }
+  /* ---------- toques e teclado ---------- */
 
   form.addEventListener('click', e => {
-    if (e.target.closest('[data-avancar]')) avancar();
-    if (e.target.closest('[data-pular]')) { form.relato.value = ''; dados.relato = ''; mostrar(atual + 1); }
+    if (e.target.closest('[data-avancar]')) { avancar(); return; }
+    if (e.target.closest('[data-pular]')) { form.relato.value = ''; dados.relato = ''; irPara(atual + 1); return; }
     const op = e.target.closest('.opcao');
-    if (op) {
-      const grupo = op.closest('.opcoes');
-      grupo.querySelectorAll('.opcao').forEach(o => o.setAttribute('aria-checked', o === op));
-      dados[grupo.dataset.campo] = op.dataset.valor;
-      op.classList.remove('pisca'); void op.offsetWidth; op.classList.add('pisca');
-      erro(passos[atual], '');
-      if (grupo.dataset.campo === 'tema') {
-        const outro = form.querySelector('.outro-texto');
-        outro.classList.toggle('on', op.dataset.valor === 'outro');
-        if (op.dataset.valor === 'outro') form.tema_outro.focus();
-      }
-      // avança sozinho, mas só se a pessoa ainda estiver nesta mesma pergunta
-      if (!op.hasAttribute('data-sem-avanco')) {
-        const daqui = atual; clearTimeout(timerAvanco);
-        timerAvanco = setTimeout(() => { if (atual === daqui) avancar(); }, 520);
-      }
+    if (!op) return;
+    const grupo = op.closest('.opcoes');
+    grupo.querySelectorAll('.opcao').forEach(o => o.setAttribute('aria-checked', String(o === op)));
+    dados[grupo.dataset.campo] = op.dataset.valor;
+    op.classList.remove('pisca'); void op.offsetWidth; op.classList.add('pisca');
+    erro(passos[atual], '');
+    if (grupo.dataset.campo === 'tema') {
+      form.querySelector('.outro-texto').classList.toggle('on', op.dataset.valor === 'outro');
+      if (op.dataset.valor === 'outro') form.tema_outro.focus();
+    }
+    salvar();
+    // avança sozinho, mas só se a pessoa ainda estiver nesta mesma pergunta
+    if (!op.hasAttribute('data-sem-avanco')) {
+      const daqui = atual; clearTimeout(timerAvanco);
+      timerAvanco = setTimeout(() => { if (atual === daqui) avancar(); }, 520);
     }
   });
-
-  voltar.addEventListener('click', () => { clearTimeout(timerAvanco); if (atual > 0) mostrar(atual - 1, true); });
 
   // letras A, B, C… e o check nas opções, como no Typeform
   const CHECK = '<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -374,12 +532,11 @@
     if (e.metaKey || e.ctrlKey || e.altKey || e.target.matches('input,textarea')) return;
     const grupo = passos[atual].querySelector('.opcoes');
     if (!grupo || e.key.length !== 1) return;
-    const i = e.key.toUpperCase().charCodeAt(0) - 65;
-    const op = grupo.querySelectorAll('.opcao')[i];
+    const op = grupo.querySelectorAll('.opcao')[e.key.toUpperCase().charCodeAt(0) - 65];
     if (op) { e.preventDefault(); op.click(); }
   });
 
-  // Enter avança nos campos de texto
+  // Enter (ou "Seguinte" no teclado do celular) avança nos campos de texto
   form.addEventListener('keydown', e => {
     if (e.key === 'Enter' && e.target.matches('input[type=text],input[type=tel]')) { e.preventDefault(); avancar(); }
   });
@@ -395,6 +552,8 @@
     e.target.value = f;
   });
 
+  /* ---------- envio ---------- */
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const p = passos[atual];
@@ -405,17 +564,42 @@
       const r = await fetch('/api/lead.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...dados, consentimento: true, site: form.site.value, tempo: Date.now() - abertoEm })
+        body: JSON.stringify(Object.assign({}, dados, { consentimento: true, site: form.site.value, tempo: Date.now() - abertoEm }))
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.erro || 'falha');
-      document.querySelector('[data-nome]').textContent = dados.nome.split(' ')[0];
-      mostrar(passos.findIndex(x => x.dataset.passo === 'fim'));
+      enviado = true;
+      apagar();
+      personalizar();
+      history.pushState({ passo: FIM }, '');
+      mostrar(FIM);
     } catch (err) {
       erro(p, 'Não consegui enviar agora. Tente de novo em instantes ou me chame no Instagram.');
       botao.disabled = false; botao.textContent = 'Enviar';
     }
   });
+
+  /* ---------- início ---------- */
+
+  const salvo = lerSalvo();
+  const noHistorico = history.state && typeof history.state.passo === 'number' ? Math.min(history.state.passo, FIM - 1) : null;
+  if (salvo) {
+    restaurar(salvo);
+    if (noHistorico !== null) {
+      mostrar(noHistorico); // recarregou a página: os passos já estão no histórico
+    } else {
+      // voltou depois (ex.: saiu para o Instagram): recria os passos no histórico
+      history.replaceState({ passo: 0 }, '');
+      for (let i = 1; i <= salvo.passo; i++) history.pushState({ passo: i }, '');
+      mostrar(salvo.passo);
+    }
+    if (atual > 0) {
+      retomada.classList.add('on');
+      setTimeout(() => retomada.classList.remove('on'), 7000);
+    }
+  } else {
+    history.replaceState({ passo: 0 }, '');
+  }
 })();
 </script>
 </body>

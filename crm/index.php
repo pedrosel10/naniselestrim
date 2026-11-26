@@ -142,13 +142,13 @@ function link_whatsapp(array $l): string {
 <meta name="theme-color" content="#F3EBDD">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   @font-face{font-family:"Editorial New";src:url(/fonts/PPEditorialNew-Regular.otf) format("opentype");font-weight:400;font-display:swap}
   :root{--creme:#F3EBDD;--creme-2:#FBF7F0;--branco:#FFFDF9;--marrom:#3B281C;--marrom-2:#2F2016;--suave:#7B6555;--tijolo:#A4442E;--fio:#D9CBB6;--verde:#4E6B45}
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{background:var(--creme);color:var(--marrom);font-family:"EB Garamond",Georgia,serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+  body{background:var(--creme);color:var(--marrom);font-family:"Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
   .sans{font-family:"Jost",sans-serif}
   .wrap{max-width:760px;margin:0 auto;padding:22px 16px 60px}
   h1{font-family:"Editorial New",serif;font-weight:400;letter-spacing:-.02em;font-size:2rem;line-height:1.05}
@@ -219,6 +219,14 @@ function link_whatsapp(array $l): string {
   .ajustes summary{cursor:pointer;list-style:none}
   .ajustes summary::-webkit-details-marker{display:none}
   .ajustes form{margin-top:14px;display:grid;gap:10px;max-width:420px}
+  /* tamanhos ajustados para a sem serifa */
+  input[type=password],input[type=email],input[type=text],textarea,select{font-size:.95rem}
+  .nota{font-size:.85rem}
+  .resumo{font-size:.9rem}
+  dl{font-size:.9rem}
+  .relato{font-size:.92rem}
+  .editar textarea{font-size:.92rem}
+  .vazio{font-size:.95rem}
 </style>
 </head>
 <body>
