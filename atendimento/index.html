@@ -45,6 +45,9 @@
 
   /* passos: coluna estreita no meio da tela, escala de formulário (estilo Typeform) */
   main,main form{flex:1;position:relative;display:flex;flex-direction:column}
+  /* a animação de entrada desloca a pergunta alguns pixels: sem isto, a página ganha
+     altura extra por um instante e a barra de rolagem pisca */
+  main{overflow:hidden;overflow:clip}
   .passo{
     display:none;flex:1;flex-direction:column;justify-content:center;
     padding:28px 28px calc(36px + env(safe-area-inset-bottom));
