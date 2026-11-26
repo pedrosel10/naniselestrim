@@ -126,6 +126,27 @@
   .fim .ajuda{max-width:300px}
   .fim a.link{margin-top:26px;font-family:"Jost",sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
 
+  /* layout centralizado */
+  .passo{justify-content:center;text-align:center;padding:30px 26px calc(30px + env(safe-area-inset-bottom))}
+  .passo > *{width:100%;max-width:360px;margin-left:auto;margin-right:auto}
+  .abertura{justify-content:flex-start}
+  .abertura > .capa{max-width:none;width:auto;margin:-30px -26px 0}
+  .contagem{margin-bottom:-2px}
+  h2{margin-top:0}
+  .ajuda{margin-top:12px}
+  .campos{margin-top:30px}
+  input[type=text],input[type=tel],textarea{text-align:center}
+  textarea{text-align:left}
+  .opcao{justify-content:center;text-align:center;padding:17px 18px;transition:border-color .25s ease,background .25s ease,color .25s ease,transform .25s ease}
+  .opcao::before{display:none}
+  .opcao[aria-checked=true]{background:var(--marrom);border-color:var(--marrom);color:var(--creme)}
+  .consentimento{justify-content:center;text-align:left;max-width:320px;margin:24px auto 0}
+  .erro{text-align:center}
+  .acoes{margin-top:28px;padding-top:0}
+  .detalhes{align-items:center}
+  .abertura .acoes{margin-top:30px}
+  h2.longa{font-size:1.7rem;line-height:1.12}
+
   .mel{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
   @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on{animation:none}}
   @media (max-width:360px){h2{font-size:1.8rem}.abertura h1{font-size:2rem}}
@@ -159,7 +180,6 @@
       </section>
 
       <section class="passo" data-passo="nome">
-        <p class="contagem">Pergunta 1 de 7</p>
         <h2>Como posso te chamar?</h2>
         <div class="campos"><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" maxlength="80" enterkeyhint="next"></div>
         <p class="erro" aria-live="polite"></p>
@@ -167,7 +187,6 @@
       </section>
 
       <section class="passo" data-passo="whatsapp">
-        <p class="contagem">Pergunta 2 de 7</p>
         <h2>Qual o seu WhatsApp?</h2>
         <p class="ajuda">Com DDD. Se você mora fora do Brasil, comece com + e o código do país.</p>
         <div class="campos"><input type="tel" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="24" enterkeyhint="next"></div>
@@ -176,7 +195,6 @@
       </section>
 
       <section class="passo" data-passo="tema">
-        <p class="contagem">Pergunta 3 de 7</p>
         <h2>O que te traz até aqui?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="tema">
@@ -193,7 +211,7 @@
       </section>
 
       <section class="passo" data-passo="relato">
-        <p class="contagem">Pergunta 4 de 7 · opcional</p>
+        <p class="contagem">Opcional</p>
         <h2>Se quiser, conte em poucas linhas o que está vivendo.</h2>
         <p class="ajuda">Só eu leio. Se preferir falar na conversa, pode pular.</p>
         <div class="campos"><textarea name="relato" maxlength="1500" placeholder="Escreva com calma…"></textarea></div>
@@ -205,7 +223,6 @@
       </section>
 
       <section class="passo" data-passo="acompanhamento">
-        <p class="contagem">Pergunta 5 de 7</p>
         <h2>Você já fez ou faz algum acompanhamento terapêutico?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="acompanhamento">
@@ -218,7 +235,6 @@
       </section>
 
       <section class="passo" data-passo="quando">
-        <p class="contagem">Pergunta 6 de 7</p>
         <h2>Quando gostaria de começar?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="quando">
@@ -231,8 +247,7 @@
       </section>
 
       <section class="passo" data-passo="contato">
-        <p class="contagem">Pergunta 7 de 7</p>
-        <h2>Os detalhes de valores e horários eu te passo pelo WhatsApp. Posso te chamar para conversarmos?</h2>
+        <h2 class="longa">Os detalhes de valores e horários eu te passo pelo WhatsApp. Posso te chamar para conversarmos?</h2>
         <div class="campos">
           <div class="opcoes" role="radiogroup" data-campo="contato">
             <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="conversar" data-sem-avanco>Pode, sim</button>
