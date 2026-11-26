@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atendimento · Nani Selestrim</title>
+<meta name="description" content="Atendimento clínico online com Nani Selestrim.">
+<meta name="theme-color" content="#F3EBDD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @font-face{font-family:"Editorial New";src:url(/fonts/PPEditorialNew-Regular.otf) format("opentype");font-weight:400;font-display:swap}
+  :root{
+    --creme:#F3EBDD;--creme-2:#FBF7F0;--marrom:#3B281C;--marrom-2:#2F2016;--marrom-suave:#7B6555;
+    --tijolo:#A4442E;--tijolo-claro:#E2B4A2;--fio:#D9CBB6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--creme);color:var(--marrom);min-height:100vh;min-height:100dvh;
+    font-family:"EB Garamond",Georgia,serif;-webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .26  0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+
+  /* topo */
+  .topo{
+    position:sticky;top:0;z-index:5;background:var(--creme);
+    display:grid;grid-template-columns:40px 1fr 40px;align-items:center;padding:14px 16px 12px;
+  }
+  .topo a.marca{grid-column:2;text-align:center;font-family:"Editorial New",serif;font-size:1.15rem;color:var(--marrom);text-decoration:none;letter-spacing:-.01em}
+  .voltar{
+    width:40px;height:40px;border:0;background:none;color:var(--marrom);display:grid;place-items:center;cursor:pointer;
+    border-radius:50%;transition:opacity .3s ease,background .3s ease;
+  }
+  .voltar:hover{background:rgba(59,40,28,.06)}
+  .voltar svg{width:20px;height:20px}
+  .voltar[hidden]{display:grid;visibility:hidden}
+  .progresso{height:2px;background:var(--fio);margin:0 20px;overflow:hidden}
+  .progresso i{display:block;height:100%;width:0;background:var(--tijolo);transition:width .5s cubic-bezier(.2,.7,.2,1)}
+
+  /* passos */
+  main,main form{flex:1;position:relative;display:flex;flex-direction:column}
+  .passo{display:none;flex:1;flex-direction:column;padding:34px 22px calc(26px + env(safe-area-inset-bottom))}
+  .passo.ativo{display:flex;animation:entra .55s cubic-bezier(.2,.7,.2,1)}
+  .passo.volta{animation-name:entraVolta}
+  @keyframes entra{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+  @keyframes entraVolta{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+
+  .contagem{font-family:"Jost",sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--marrom-suave)}
+  h1,h2{font-family:"Editorial New",serif;font-weight:400;letter-spacing:-.02em;line-height:1.08}
+  h2{font-size:2.05rem;margin-top:12px}
+  .ajuda{margin-top:10px;font-size:1.12rem;line-height:1.45;color:var(--marrom-suave)}
+  .campos{margin-top:28px}
+
+  input[type=text],input[type=tel],textarea{
+    width:100%;background:var(--creme-2);border:1px solid var(--fio);border-radius:0;
+    font:inherit;font-size:1.3rem;color:var(--marrom);padding:16px 16px;outline:none;
+    transition:border-color .3s ease,box-shadow .3s ease;-webkit-appearance:none;appearance:none;
+  }
+  textarea{min-height:150px;resize:vertical;line-height:1.4;font-size:1.18rem}
+  input::placeholder,textarea::placeholder{color:#B4A491}
+  input:focus,textarea:focus{border-color:var(--marrom);box-shadow:0 0 0 3px rgba(59,40,28,.07)}
+
+  /* opções */
+  .opcoes{display:flex;flex-direction:column;gap:10px}
+  .opcao{
+    position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;
+    background:var(--creme-2);border:1px solid var(--fio);padding:16px 18px;
+    font:inherit;font-size:1.2rem;line-height:1.25;color:var(--marrom);
+    transition:border-color .25s ease,background .25s ease,transform .25s ease;
+  }
+  .opcao::before{
+    content:"";flex-shrink:0;width:18px;height:18px;border-radius:50%;border:1px solid #BFAE97;
+    transition:border-color .25s ease,box-shadow .25s ease,background .25s ease;
+  }
+  .opcao:hover{border-color:#BFAE97}
+  .opcao:active{transform:scale(.99)}
+  .opcao[aria-checked=true]{border-color:var(--marrom);background:#FFFDF9}
+  .opcao[aria-checked=true]::before{border-color:var(--tijolo);background:var(--tijolo);box-shadow:inset 0 0 0 3px #FFFDF9}
+  .outro-texto{margin-top:10px;display:none}
+  .outro-texto.on{display:block;animation:entra .4s ease}
+
+  /* consentimento */
+  .consentimento{display:flex;gap:12px;align-items:flex-start;margin-top:22px;font-size:1.05rem;line-height:1.4;color:var(--marrom-suave);cursor:pointer}
+  .consentimento input{flex-shrink:0;width:20px;height:20px;margin-top:2px;accent-color:var(--tijolo)}
+
+  .erro{min-height:22px;margin-top:10px;font-family:"Jost",sans-serif;font-size:.85rem;color:var(--tijolo)}
+
+  /* rodapé dos passos */
+  .acoes{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;gap:10px}
+  .botao{
+    position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;
+    padding:18px 22px;border:0;cursor:pointer;text-decoration:none;
+    background:linear-gradient(180deg,#43301F 0%,var(--marrom-2) 100%);color:var(--creme);
+    font-family:"Jost",sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+    box-shadow:0 1px 2px rgba(47,32,22,.2),0 18px 30px -20px rgba(47,32,22,.7);
+    transition:transform .3s ease,opacity .3s ease;
+  }
+  .botao::before{content:"";position:absolute;inset:5px;border:1px solid rgba(243,235,221,.16);pointer-events:none}
+  .botao:active{transform:scale(.99)}
+  .botao[disabled]{opacity:.55;cursor:default}
+  .botao svg{width:15px;height:15px}
+  .pular{background:none;border:0;cursor:pointer;padding:10px;font-family:"Jost",sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom-suave)}
+
+  /* abertura */
+  .capa{
+    position:relative;height:34vh;min-height:220px;margin:-34px -22px 0;
+    background:url(/img/atendimento.jpg) 70% 55%/cover;filter:sepia(.2) saturate(.85);
+  }
+  .abertura h1{font-size:2.35rem;margin-top:26px}
+  .abertura .ajuda{font-size:1.18rem}
+  .detalhes{margin-top:22px;display:flex;flex-direction:column;gap:8px;font-family:"Jost",sans-serif;font-size:.78rem;letter-spacing:.06em;color:var(--marrom-suave)}
+  .detalhes span{display:flex;align-items:center;gap:10px}
+  .detalhes span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--tijolo);opacity:.8}
+
+  /* final */
+  .fim{justify-content:center;text-align:center;align-items:center}
+  .fim .selo{width:64px;height:64px;border-radius:50%;border:1px solid var(--fio);display:grid;place-items:center;color:var(--tijolo);margin-bottom:22px;background:var(--creme-2)}
+  .fim .selo svg{width:26px;height:26px}
+  .fim h2{font-size:2.3rem}
+  .fim .ajuda{max-width:300px}
+  .fim a.link{margin-top:26px;font-family:"Jost",sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--marrom);text-decoration:none;border-bottom:1px solid var(--fio);padding-bottom:3px}
+
+  .mel{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  @media (prefers-reduced-motion:reduce){.passo.ativo,.outro-texto.on{animation:none}}
+  @media (max-width:360px){h2{font-size:1.8rem}.abertura h1{font-size:2rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topo">
+    <button class="voltar" type="button" aria-label="Voltar" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <a class="marca" href="/">Nani Selestrim</a>
+  </header>
+  <div class="progresso" aria-hidden="true"><i></i></div>
+
+  <main>
+    <form id="form" novalidate autocomplete="on">
+      <input class="mel" type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <!-- abertura -->
+      <section class="passo abertura ativo" data-passo="inicio">
+        <div class="capa" aria-hidden="true"></div>
+        <h1>Seja atendido por mim</h1>
+        <p class="ajuda">Algumas perguntas rápidas para eu entender o seu momento antes de conversarmos.</p>
+        <div class="detalhes">
+          <span>Consultas online, individuais</span>
+          <span>Leva menos de um minuto</span>
+          <span>Eu mesma te chamo pelo WhatsApp</span>
+        </div>
+        <div class="acoes"><button class="botao" type="button" data-avancar>Começar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </section>
+
+      <section class="passo" data-passo="nome">
+        <p class="contagem">Pergunta 1 de 7</p>
+        <h2>Como posso te chamar?</h2>
+        <div class="campos"><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" maxlength="80" enterkeyhint="next"></div>
+        <p class="erro" aria-live="polite"></p>
+        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+      </section>
+
+      <section class="passo" data-passo="whatsapp">
+        <p class="contagem">Pergunta 2 de 7</p>
+        <h2>Qual o seu WhatsApp?</h2>
+        <p class="ajuda">Com DDD. Se você mora fora do Brasil, comece com + e o código do país.</p>
+        <div class="campos"><input type="tel" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="24" enterkeyhint="next"></div>
+        <p class="erro" aria-live="polite"></p>
+        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+      </section>
+
+      <section class="passo" data-passo="tema">
+        <p class="contagem">Pergunta 3 de 7</p>
+        <h2>O que te traz até aqui?</h2>
+        <div class="campos">
+          <div class="opcoes" role="radiogroup" data-campo="tema">
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="autodominio">Ansiedade, irritação ou falta de autodomínio</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="filhos">Dificuldades na educação dos filhos</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="casamento">Meu casamento</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="afetivo">Questões afetivas e emocionais</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="outro" data-sem-avanco>Outro</button>
+          </div>
+          <div class="outro-texto"><input type="text" name="tema_outro" placeholder="Escreva aqui" maxlength="160"></div>
+        </div>
+        <p class="erro" aria-live="polite"></p>
+        <div class="acoes"><button class="botao" type="button" data-avancar>Continuar</button></div>
+      </section>
+
+      <section class="passo" data-passo="relato">
+        <p class="contagem">Pergunta 4 de 7 · opcional</p>
+        <h2>Se quiser, conte em poucas linhas o que está vivendo.</h2>
+        <p class="ajuda">Só eu leio. Se preferir falar na conversa, pode pular.</p>
+        <div class="campos"><textarea name="relato" maxlength="1500" placeholder="Escreva com calma…"></textarea></div>
+        <p class="erro" aria-live="polite"></p>
+        <div class="acoes">
+          <button class="botao" type="button" data-avancar>Continuar</button>
+          <button class="pular" type="button" data-pular>Pular</button>
+        </div>
+      </section>
+
+      <section class="passo" data-passo="acompanhamento">
+        <p class="contagem">Pergunta 5 de 7</p>
+        <h2>Você já fez ou faz algum acompanhamento terapêutico?</h2>
+        <div class="campos">
+          <div class="opcoes" role="radiogroup" data-campo="acompanhamento">
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="nunca">Nunca fiz</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="ja_fiz">Já fiz</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="fazendo">Estou fazendo agora</button>
+          </div>
+        </div>
+        <p class="erro" aria-live="polite"></p>
+      </section>
+
+      <section class="passo" data-passo="quando">
+        <p class="contagem">Pergunta 6 de 7</p>
+        <h2>Quando gostaria de começar?</h2>
+        <div class="campos">
+          <div class="opcoes" role="radiogroup" data-campo="quando">
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="logo">O quanto antes</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="semanas">Nas próximas semanas</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="conhecendo">Ainda estou conhecendo</button>
+          </div>
+        </div>
+        <p class="erro" aria-live="polite"></p>
+      </section>
+
+      <section class="passo" data-passo="contato">
+        <p class="contagem">Pergunta 7 de 7</p>
+        <h2>Os detalhes de valores e horários eu te passo pelo WhatsApp. Posso te chamar para conversarmos?</h2>
+        <div class="campos">
+          <div class="opcoes" role="radiogroup" data-campo="contato">
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="conversar" data-sem-avanco>Pode, sim</button>
+            <button type="button" class="opcao" role="radio" aria-checked="false" data-valor="informacoes" data-sem-avanco>Prefiro só receber as informações</button>
+          </div>
+          <label class="consentimento">
+            <input type="checkbox" name="consentimento">
+            <span>Autorizo o contato pelo WhatsApp e o uso destes dados apenas para o meu atendimento.</span>
+          </label>
+        </div>
+        <p class="erro" aria-live="polite"></p>
+        <div class="acoes"><button class="botao" type="submit">Enviar</button></div>
+      </section>
+
+      <section class="passo fim" data-passo="fim">
+        <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>Obrigada, <span data-nome></span>.</h2>
+        <p class="ajuda">Recebi suas respostas. Vou te chamar pelo WhatsApp em breve.</p>
+        <a class="link" href="https://instagram.com/naniselestrim">@naniselestrim</a>
+      </section>
+    </form>
+  </main>
+</div>
+
+<script>
+(() => {
+  const form = document.getElementById('form');
+  const passos = [...form.querySelectorAll('.passo')];
+  const perguntas = passos.filter(p => !['inicio', 'fim'].includes(p.dataset.passo));
+  const barra = document.querySelector('.progresso i');
+  const voltar = document.querySelector('.voltar');
+  const dados = {};
+  const abertoEm = Date.now();
+  let atual = 0;
+
+  const params = new URLSearchParams(location.search);
+  let refHost = ''; try { refHost = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+  dados.origem = params.get('origem') || params.get('utm_source') || (refHost && !refHost.endsWith('naniselestrim.com') ? refHost : (refHost ? 'link-na-bio' : 'direto'));
+
+  function mostrar(i, voltando) {
+    passos[atual].classList.remove('ativo', 'volta');
+    atual = i;
+    const p = passos[atual];
+    p.classList.toggle('volta', !!voltando);
+    p.classList.add('ativo');
+    const n = perguntas.indexOf(p);
+    barra.style.width = p.dataset.passo === 'fim' ? '100%' : (n < 0 ? '0%' : ((n + 1) / (perguntas.length + 1) * 100) + '%');
+    voltar.hidden = atual === 0 || p.dataset.passo === 'fim';
+    window.scrollTo(0, 0);
+    const campo = p.querySelector('input[type=text]:not(.mel):not([name=tema_outro]),input[type=tel],textarea');
+    if (campo && matchMedia('(hover:hover)').matches) setTimeout(() => campo.focus(), 250);
+  }
+
+  function erro(p, msg) { const el = p.querySelector('.erro'); if (el) el.textContent = msg || ''; }
+
+  function digitos(v) { return (v || '').replace(/\D/g, ''); }
+
+  function validar(p) {
+    const nome = p.dataset.passo;
+    erro(p, '');
+    if (nome === 'nome') {
+      const v = form.nome.value.trim();
+      if (v.length < 2) return erro(p, 'Me diga como posso te chamar.'), false;
+      dados.nome = v;
+    }
+    if (nome === 'whatsapp') {
+      const v = form.whatsapp.value.trim(), d = digitos(v);
+      if (v.startsWith('+') ? d.length < 8 : d.length < 10) return erro(p, 'Confira o número, com DDD.'), false;
+      dados.whatsapp = v;
+    }
+    if (nome === 'tema') {
+      if (!dados.tema) return erro(p, 'Escolha uma das opções.'), false;
+      if (dados.tema === 'outro') {
+        const t = form.tema_outro.value.trim();
+        if (t.length < 2) return erro(p, 'Escreva em poucas palavras o que te traz.'), false;
+        dados.tema_outro = t;
+      } else delete dados.tema_outro;
+    }
+    if (nome === 'relato') dados.relato = form.relato.value.trim();
+    if (['acompanhamento', 'quando'].includes(nome) && !dados[nome]) return erro(p, 'Escolha uma das opções.'), false;
+    if (nome === 'contato') {
+      if (!dados.contato) return erro(p, 'Escolha uma das opções.'), false;
+      if (!form.consentimento.checked) return erro(p, 'Preciso da sua autorização para te chamar.'), false;
+    }
+    return true;
+  }
+
+  function avancar() { if (validar(passos[atual])) mostrar(atual + 1); }
+
+  form.addEventListener('click', e => {
+    if (e.target.closest('[data-avancar]')) avancar();
+    if (e.target.closest('[data-pular]')) { form.relato.value = ''; dados.relato = ''; mostrar(atual + 1); }
+    const op = e.target.closest('.opcao');
+    if (op) {
+      const grupo = op.closest('.opcoes');
+      grupo.querySelectorAll('.opcao').forEach(o => o.setAttribute('aria-checked', o === op));
+      dados[grupo.dataset.campo] = op.dataset.valor;
+      erro(passos[atual], '');
+      if (grupo.dataset.campo === 'tema') {
+        const outro = form.querySelector('.outro-texto');
+        outro.classList.toggle('on', op.dataset.valor === 'outro');
+        if (op.dataset.valor === 'outro') form.tema_outro.focus();
+      }
+      if (!op.hasAttribute('data-sem-avanco')) setTimeout(avancar, 280);
+    }
+  });
+
+  voltar.addEventListener('click', () => { if (atual > 0) mostrar(atual - 1, true); });
+
+  // Enter avança nos campos de texto
+  form.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.matches('input[type=text],input[type=tel]')) { e.preventDefault(); avancar(); }
+  });
+
+  // máscara simples para números do Brasil
+  form.whatsapp.addEventListener('input', e => {
+    const v = e.target.value;
+    if (v.trim().startsWith('+')) return;
+    const d = digitos(v).slice(0, 11);
+    let f = d;
+    if (d.length > 2) f = '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length > 7) f = '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length - 4) + '-' + d.slice(-4);
+    e.target.value = f;
+  });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const p = passos[atual];
+    if (!validar(p)) return;
+    const botao = p.querySelector('[type=submit]');
+    botao.disabled = true; botao.textContent = 'Enviando…';
+    try {
+      const r = await fetch('/api/lead.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...dados, consentimento: true, site: form.site.value, tempo: Date.now() - abertoEm })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.erro || 'falha');
+      document.querySelector('[data-nome]').textContent = dados.nome.split(' ')[0];
+      mostrar(passos.findIndex(x => x.dataset.passo === 'fim'));
+    } catch (err) {
+      erro(p, 'Não consegui enviar agora. Tente de novo em instantes ou me chame no Instagram.');
+      botao.disabled = false; botao.textContent = 'Enviar';
+    }
+  });
+})();
+</script>
+</body>
+</html>

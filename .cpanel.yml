@@ -2,5 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=$HOME/naniselestrim.com/
-    - /bin/cp index.html $DEPLOYPATH
-    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/cp index.html .htaccess $DEPLOYPATH
+    - /bin/cp -R img fonts atendimento api crm _app $DEPLOYPATH

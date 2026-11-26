@@ -2,19 +2,275 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nani Selestrim</title>
+<meta name="description" content="Filosofia, clínica e família. Estudo dos vínculos humanos e da formação afetiva.">
+<meta name="theme-color" content="#2A1D14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F3EBDD;color:#4A3426;font-family:Georgia,"Times New Roman",serif;text-align:center}
-  h1{font-weight:normal;font-size:2.4rem;margin:0 0 .5rem}
-  em{color:#A4442E}
-  p{opacity:.75}
+  @font-face{font-family:"Editorial New";src:url(fonts/PPEditorialNew-Regular.otf) format("opentype");font-weight:400;font-style:normal;font-display:swap}
+  :root{
+    --creme:#F3EBDD;--creme-2:#FBF7F0;
+    --marrom:#3B281C;--marrom-2:#2F2016;--marrom-suave:#7B6555;
+    --tijolo:#A4442E;--tijolo-claro:#E2B4A2;--fio:#D9CBB6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--creme);color:var(--marrom);
+    font-family:"Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  /* grão de papel sobre tudo, foto inclusive, para dar unidade */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:10;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .26  0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .pagina{max-width:480px;margin:0 auto;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+
+  /* foto que se dissolve no papel */
+  .foto{position:relative;height:57vh;min-height:390px;max-height:590px;overflow:hidden}
+  .foto img{
+    width:100%;height:100%;object-fit:cover;object-position:58% 28%;display:block;
+    filter:sepia(.16) contrast(1.03) brightness(1.02);
+    animation:revela 1.6s ease forwards;
+  }
+  .foto::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(28,18,11,.45) 0%,rgba(28,18,11,0) 22%);
+  }
+  .arroba{
+    position:absolute;z-index:1;top:24px;left:0;right:0;
+    text-align:center;padding-left:.22em;
+    color:#F6EEE2;font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+    text-shadow:0 1px 10px rgba(0,0,0,.35);
+  }
+
+  /* a tarja creme, igual à das capas dos carrosséis */
+  .tarja{
+    position:relative;z-index:2;margin:-96px 20px 0;background:linear-gradient(rgba(251,247,240,.55),rgba(251,247,240,.55)),url(img/sombra.jpg) center/cover,var(--creme-2);
+    padding:30px 24px 28px;text-align:center;
+    box-shadow:0 1px 2px rgba(59,40,28,.06),0 28px 50px -30px rgba(59,40,28,.5);
+  }
+  .tarja::before{content:"";position:absolute;inset:6px;border:1px solid var(--fio);pointer-events:none}
+  .rotulo{font-size:.7rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--marrom-suave);padding-left:.24em}
+  h1{
+    margin-top:14px;font-family:"Editorial New",serif;font-weight:400;
+    font-size:3.1rem;line-height:1;letter-spacing:-.02em;
+  }
+  h1 em{font-style:normal;color:var(--tijolo)}
+  .bio{margin:14px auto 0;max-width:280px;font-family:"EB Garamond",serif;font-weight:400;font-size:1.12rem;line-height:1.5;color:var(--marrom-suave)}
+
+  /* botões com o mesmo fio interno da tarja */
+  nav{margin:16px 20px 0;display:flex;flex-direction:column;gap:12px}
+  .botao{
+    position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:19px 20px 19px 26px;text-decoration:none;
+    transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,background .35s ease;
+  }
+  .botao::before{content:"";position:absolute;inset:5px;border:1px solid;pointer-events:none;transition:border-color .35s ease}
+  .botao small{display:block;font-size:.66rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;margin-bottom:7px}
+  .botao strong{display:block;font-family:"Editorial New",serif;font-weight:400;font-size:1.6rem;line-height:1.05;letter-spacing:-.015em}
+  .botao strong em{font-style:normal}
+  .circulo{
+    flex-shrink:0;width:42px;height:42px;border-radius:50%;
+    display:grid;place-items:center;border:1px solid;
+    transition:transform .35s cubic-bezier(.2,.7,.2,1),background .35s ease,color .35s ease,border-color .35s ease;
+  }
+  .circulo svg{width:15px;height:15px}
+
+  /* imagem à direita do card, dissolvendo na cor do card */
+  .botao > span:nth-child(2){position:relative;z-index:1}
+  .circulo{position:relative;z-index:1;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .principal .circulo{background:rgba(47,32,22,.55)}
+  .secundario .circulo{background:rgba(251,247,240,.85)}
+  .imagem{
+    position:absolute;top:0;right:0;bottom:0;width:70%;background-size:cover;pointer-events:none;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.25) 35%,rgba(0,0,0,.75) 75%,#000 100%);
+            mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.25) 35%,rgba(0,0,0,.75) 75%,#000 100%);
+  }
+  .principal .imagem{background-image:url(img/atendimento.jpg);background-position:70% 55%;filter:sepia(.2) saturate(.85)}
+  .secundario .imagem{width:58%;-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 30%,rgba(0,0,0,.2) 55%,rgba(0,0,0,.5) 80%,rgba(0,0,0,.7) 100%);mask-image:linear-gradient(90deg,transparent 0%,transparent 30%,rgba(0,0,0,.2) 55%,rgba(0,0,0,.5) 80%,rgba(0,0,0,.7) 100%);background-image:url(img/escalas.jpg);background-position:30% 40%;filter:saturate(.75) sepia(.12)}
+  .botao{overflow:visible}
+  .botao::before{z-index:2}
+
+  .principal{
+    background:linear-gradient(180deg,#43301F 0%,var(--marrom-2) 100%);color:var(--creme);
+    box-shadow:0 1px 2px rgba(47,32,22,.2),0 18px 30px -20px rgba(47,32,22,.7);
+  }
+  .principal::before{border-color:rgba(243,235,221,.16)}
+  .principal small{color:var(--tijolo-claro)}
+  .principal .circulo{border-color:rgba(243,235,221,.38);color:var(--creme)}
+  .principal:hover .circulo,.principal:focus-visible .circulo{background:var(--creme);color:var(--marrom);border-color:var(--creme)}
+
+  .secundario{background:var(--creme-2);color:var(--marrom);border:1px solid var(--fio);box-shadow:0 1px 2px rgba(59,40,28,.05),0 16px 28px -22px rgba(59,40,28,.45)}
+  .secundario::before{border-color:rgba(217,203,182,.6)}
+  .secundario small{color:var(--marrom-suave)}
+  .secundario strong em{color:var(--tijolo)}
+  .secundario .circulo{border-color:var(--fio);color:var(--tijolo)}
+  .secundario:hover .circulo,.secundario:focus-visible .circulo{background:var(--tijolo);color:var(--creme-2);border-color:var(--tijolo)}
+
+  .botao:hover,.botao:focus-visible{transform:translateY(-2px);outline:none}
+  .botao:hover .circulo,.botao:focus-visible .circulo{transform:translateX(3px)}
+  .botao:active{transform:translateY(0) scale(.99)}
+
+  footer{margin-top:30px;text-align:center}
+  footer span{font-size:.68rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--marrom-suave);padding-left:.24em}
+
+  /* aviso de "em breve": balão que nasce do card */
+  .aviso{
+    position:absolute;right:8px;bottom:calc(100% + 12px);z-index:5;
+    transform:translateY(6px) scale(.96);transform-origin:85% 100%;opacity:0;pointer-events:none;
+    background:var(--creme-2);color:var(--marrom);border:1px solid var(--fio);
+    padding:10px 18px 9px;white-space:nowrap;text-align:center;
+    box-shadow:0 16px 30px -18px rgba(59,40,28,.55);
+    transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1);
+  }
+  .aviso::after{
+    content:"";position:absolute;right:24px;bottom:-6px;width:10px;height:10px;
+    background:var(--creme-2);border-right:1px solid var(--fio);border-bottom:1px solid var(--fio);transform:rotate(45deg);
+  }
+  .aviso strong{display:block;font-family:"Editorial New",serif;font-weight:400;font-size:1.15rem;letter-spacing:-.01em;line-height:1.1}
+  .aviso.on{opacity:1;transform:none}
+
+  /* pétalas */
+  .pagina{position:relative}
+  .petalas{position:absolute;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+  .petala{position:absolute;left:0;top:0;width:28px;height:28px;background:url(img/petala.png) center/contain no-repeat;
+    filter:drop-shadow(0 3px 3px rgba(59,40,28,.22));will-change:transform}
+
+  .sobe{opacity:0;transform:translateY(14px);animation:sobe 1s cubic-bezier(.2,.7,.2,1) forwards}
+  .d1{animation-delay:.2s}.d2{animation-delay:.38s}.d3{animation-delay:.5s}.d4{animation-delay:.65s}
+  @keyframes sobe{to{opacity:1;transform:none}}
+  @keyframes revela{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.sobe,.foto img{animation:none;opacity:1;transform:none}}
+  @media (max-width:360px){h1{font-size:2.55rem}.botao strong{font-size:1.4rem}.tarja,nav{margin-left:14px;margin-right:14px}}
 </style>
 </head>
 <body>
-  <main>
+<div class="pagina">
+  <div class="petalas" aria-hidden="true"></div>
+  <div class="foto">
+    <img src="img/nani.jpg" alt="Nani Selestrim sorrindo com os filhos, em foto preto e branco" width="1013" height="1300">
+    <span class="arroba">@naniselestrim</span>
+  </div>
+
+  <section class="tarja sobe d1">
+    <p class="rotulo">Filosofia · Clínica · Família</p>
     <h1>Nani <em>Selestrim</em></h1>
-    <p>Filosofia, clínica e família. Site em construção.</p>
-  </main>
+    <p class="bio">Estudo dos vínculos humanos e da formação afetiva.</p>
+  </section>
+
+  <nav>
+    <a class="botao principal sobe d2" href="/atendimento/">
+      <span class="imagem" aria-hidden="true"></span>
+      <span><small>Atendimentos</small><strong>Seja atendido por mim</strong></span>
+      <span class="circulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="botao secundario sobe d3" href="#escala-de-matematica" data-em-breve>
+      <span class="imagem" aria-hidden="true"></span>
+      <span><small>Apostila</small><strong>Escala de <em>Matemática</em></strong></span>
+      <span class="aviso" role="status" aria-live="polite"><strong>Em breve</strong></span>
+      <span class="circulo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </nav>
+
+  <footer class="sobe d4">
+    <span>naniselestrim.com</span>
+  </footer>
+</div>
+
+<script>
+  const aviso=document.querySelector('.aviso');let t;
+  document.querySelectorAll('[data-em-breve]').forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();aviso.classList.add('on');clearTimeout(t);
+    t=setTimeout(()=>aviso.classList.remove('on'),2400);
+  }));
+</script>
+<script>
+(() => {
+  const camada = document.querySelector('.petalas');
+  const pagina = document.querySelector('.pagina');
+  const calma = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // onde algumas pétalas pousam: [elemento, x (0–1 da largura), y (0–1 da altura), tamanho, giro final]
+  const pousos = [
+    ['.tarja',      .94, .03, 42, 28],
+    ['.principal',  .03, .1,  32, -120],
+    ['.secundario', .96, .94, 38, 150],
+    ['footer',      .2,  .35, 28, -40],
+  ];
+
+  function alvo(sel, fx, fy){
+    const r = document.querySelector(sel).getBoundingClientRect();
+    const p = pagina.getBoundingClientRect();
+    return { x: r.left - p.left + r.width*fx, y: r.top - p.top + r.height*fy };
+  }
+
+  function criar(tam){
+    const el = document.createElement('span');
+    el.className = 'petala';
+    el.style.width = el.style.height = tam + 'px';
+    camada.appendChild(el);
+    return el;
+  }
+
+  // queda com balanço: vai de y0 até y1, oscilando no x
+  function cair(el, x0, x1, y0, y1, giro0, giro1, dur, delay){
+    const passos = 9, kf = [];
+    for (let i = 0; i <= passos; i++){
+      const t = i/passos, ease = 1 - Math.pow(1 - t, 1.6);
+      const balanco = Math.sin(t*Math.PI*3) * 26 * (1 - t*.85);
+      const x = x0 + (x1 - x0)*ease + balanco;
+      const y = y0 + (y1 - y0)*t;
+      const rot = giro0 + (giro1 - giro0)*t + Math.sin(t*Math.PI*4)*18*(1-t);
+      kf.push({ transform:`translate(${x}px,${y}px) rotate(${rot}deg) rotateX(${Math.sin(t*Math.PI*3)*45*(1-t)}deg)` });
+    }
+    return el.animate(kf, { duration: dur, delay, easing: 'linear', fill: 'both' });
+  }
+
+  function posar(){
+    pousos.forEach(([sel, fx, fy, tam, giro], i) => {
+      const a = alvo(sel, fx, fy), el = criar(tam);
+      const x = a.x - tam/2, y = a.y - tam/2;
+      if (calma){ el.style.transform = `translate(${x}px,${y}px) rotate(${giro}deg)`; return; }
+      cair(el, x + (Math.random()*120 - 60), x, -60, y, giro - 220, giro, 5000 + i*400, 1200 + i*1300);
+    });
+  }
+
+  // pétalas soltas que atravessam a página de tempos em tempos
+  function passageira(){
+    const w = pagina.clientWidth, h = pagina.scrollHeight, tam = 26 + Math.random()*14;
+    const el = criar(tam), x0 = Math.random()*w, x1 = x0 + (Math.random()*160 - 80);
+    const g = Math.random()*360;
+    cair(el, x0, x1, -60, h + 40, g, g + 300 + Math.random()*200, 9000 + Math.random()*4000, 0)
+      .finished.then(() => el.remove());
+  }
+
+  function iniciar(){
+    camada.innerHTML = '';
+    posar();
+    if (calma) return;
+    // uma revoada só: algumas passam e somem, junto com as que pousam
+    [0, 900, 2100, 3000, 4300, 5600].forEach(d => setTimeout(passageira, d));
+  }
+
+  // espera fontes e a entrada dos cards para medir as posições certas
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(iniciar, 2600));
+  let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => {
+    camada.querySelectorAll('.petala').forEach(e => e.remove()); posar();
+  }, 300); });
+})();
+</script>
+<script>
+  // leva a origem da visita (ex.: instagram) até o formulário
+  (() => {
+    const a = document.querySelector('a[href="/atendimento/"]');
+    let host = ''; try { host = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+    const origem = new URLSearchParams(location.search).get('utm_source') || (host && !host.endsWith('naniselestrim.com') ? host : '');
+    if (origem) a.href += '?origem=' + encodeURIComponent(origem);
+  })();
+</script>
 </body>
 </html>
