@@ -230,12 +230,27 @@
     return el.animate(kf, { duration: dur, delay, easing: 'linear', fill: 'both' });
   }
 
+  const pousadas = []; // [elemento, animação, especificação do pouso]
+
   function posar(){
-    pousos.forEach(([sel, fx, fy, tam, giro], i) => {
+    pousos.forEach((spec, i) => {
+      const [sel, fx, fy, tam, giro] = spec;
       const a = alvo(sel, fx, fy), el = criar(tam);
       const x = a.x - tam/2, y = a.y - tam/2;
-      if (calma){ el.style.transform = `translate(${x}px,${y}px) rotate(${giro}deg)`; return; }
-      cair(el, x + (Math.random()*120 - 60), x, -60, y, giro - 220, giro, 5000 + i*400, 1200 + i*1300);
+      if (calma){ el.style.transform = `translate(${x}px,${y}px) rotate(${giro}deg)`; pousadas.push([el, null, spec]); return; }
+      const anim = cair(el, x + (Math.random()*120 - 60), x, -60, y, giro - 220, giro, 5000 + i*400, 1200 + i*1300);
+      pousadas.push([el, anim, spec]);
+    });
+  }
+
+  // Se o layout mudar de verdade (largura da tela), só reposiciona as pétalas já pousadas,
+  // sem refazer a queda. Mudança só de altura (barra do navegador no celular ao rolar) é ignorada.
+  function reposicionar(){
+    pousadas.forEach(([el, anim, [sel, fx, fy, tam, giro]]) => {
+      if (anim && anim.playState !== 'finished') return; // ainda caindo: deixa terminar
+      if (anim) anim.cancel();
+      const a = alvo(sel, fx, fy);
+      el.style.transform = `translate(${a.x - tam/2}px,${a.y - tam/2}px) rotate(${giro}deg)`;
     });
   }
 
@@ -249,7 +264,6 @@
   }
 
   function iniciar(){
-    camada.innerHTML = '';
     posar();
     if (calma) return;
     // uma revoada só: algumas passam e somem, junto com as que pousam
@@ -258,9 +272,12 @@
 
   // espera fontes e a entrada dos cards para medir as posições certas
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(iniciar, 2600));
-  let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => {
-    camada.querySelectorAll('.petala').forEach(e => e.remove()); posar();
-  }, 300); });
+  let t, largura = innerWidth;
+  addEventListener('resize', () => {
+    if (innerWidth === largura) return;
+    largura = innerWidth;
+    clearTimeout(t); t = setTimeout(reposicionar, 200);
+  });
 })();
 </script>
 <script>
