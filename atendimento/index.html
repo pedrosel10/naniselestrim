@@ -276,7 +276,7 @@
   const voltar = document.querySelector('.voltar');
   const dados = {};
   const abertoEm = Date.now();
-  let atual = 0;
+  let atual = 0, timerAvanco = null;
 
   const params = new URLSearchParams(location.search);
   let refHost = ''; try { refHost = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
@@ -347,11 +347,15 @@
         outro.classList.toggle('on', op.dataset.valor === 'outro');
         if (op.dataset.valor === 'outro') form.tema_outro.focus();
       }
-      if (!op.hasAttribute('data-sem-avanco')) setTimeout(avancar, 520);
+      // avança sozinho, mas só se a pessoa ainda estiver nesta mesma pergunta
+      if (!op.hasAttribute('data-sem-avanco')) {
+        const daqui = atual; clearTimeout(timerAvanco);
+        timerAvanco = setTimeout(() => { if (atual === daqui) avancar(); }, 520);
+      }
     }
   });
 
-  voltar.addEventListener('click', () => { if (atual > 0) mostrar(atual - 1, true); });
+  voltar.addEventListener('click', () => { clearTimeout(timerAvanco); if (atual > 0) mostrar(atual - 1, true); });
 
   // letras A, B, C… e o check nas opções, como no Typeform
   const CHECK = '<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';

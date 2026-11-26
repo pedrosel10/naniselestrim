@@ -4,11 +4,11 @@
 declare(strict_types=1);
 require __DIR__ . '/../_app/app.php';
 
-$https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-session_name('nani_crm');
-session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 30, 'path' => '/crm/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Strict']);
-session_start();
+iniciar_sessao();
 header('X-Frame-Options: DENY');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: no-referrer');
+header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 
@@ -49,13 +49,18 @@ if (!$cfg) {
 // 2) Login
 elseif (empty($_SESSION['ok'])) {
     if ($post && csrf_ok($csrf)) {
-        if (password_verify((string) ($_POST['senha'] ?? ''), $cfg['senha'])) {
+        if (login_bloqueado()) {
+            $aviso = 'Muitas tentativas. Espere 15 minutos e tente de novo.';
+        } elseif (password_verify((string) ($_POST['senha'] ?? ''), $cfg['senha'])) {
+            limpar_falhas();
             session_regenerate_id(true);
             $_SESSION['ok'] = true;
             voltar();
+        } else {
+            registrar_falha();
+            sleep(1);
+            $aviso = 'Senha incorreta.';
         }
-        sleep(1);
-        $aviso = 'Senha incorreta.';
     }
     $tela = 'login';
 }
@@ -156,7 +161,7 @@ function link_whatsapp(array $l): string {
   .acesso h1{margin:8px 0 18px}
   label.campo{display:block;margin-top:14px}
   label.campo span{display:block;margin-bottom:6px}
-  input[type=password],input[type=email],textarea,select{
+  input[type=password],input[type=email],input[type=text],textarea,select{
     width:100%;font:inherit;font-size:1.1rem;color:var(--marrom);background:var(--branco);border:1px solid var(--fio);padding:11px 12px;border-radius:0;outline:none;-webkit-appearance:none;appearance:none
   }
   select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237B6555' stroke-width='1.6'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:34px}
@@ -189,7 +194,8 @@ function link_whatsapp(array $l): string {
   .vazio{padding:40px 20px;text-align:center;color:var(--suave);font-size:1.1rem;border:1px dashed var(--fio)}
   details.lead{background:var(--creme-2);border:1px solid var(--fio);scroll-margin-top:16px}
   details.lead[open]{background:var(--branco);border-color:#CDBBA2;box-shadow:0 14px 30px -24px rgba(59,40,28,.5)}
-  details.lead > summary{list-style:none;cursor:pointer;padding:15px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+  details.lead > summary{list-style:none;cursor:pointer;display:block;-webkit-tap-highlight-color:transparent}
+  .cab{padding:15px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px}
   details.lead > summary::-webkit-details-marker{display:none}
   .nome{font-family:"Editorial New",serif;font-size:1.45rem;letter-spacing:-.015em;line-height:1.1}
   .quando{font-family:"Jost",sans-serif;font-size:.72rem;color:var(--suave);text-align:right;white-space:nowrap}
@@ -219,11 +225,12 @@ function link_whatsapp(array $l): string {
 
 <?php if ($tela === 'configurar'): ?>
 <div class="acesso">
-  <form method="post" autocomplete="off">
+  <form method="post" action="/crm/">
     <p class="rotulo">Primeiro acesso</p>
     <h1>Crie a senha do CRM</h1>
     <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
-    <label class="campo"><span class="rotulo">Senha (mín. 8 caracteres)</span><input type="password" name="senha" required minlength="8" autocomplete="new-password"></label>
+    <label class="campo"><span class="rotulo">Usuário</span><input type="text" name="usuario" id="usuario" value="nani" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+    <label class="campo"><span class="rotulo">Senha (mín. 8 caracteres)</span><input type="password" name="senha" id="senha-nova" required minlength="8" autocomplete="new-password"></label>
     <label class="campo"><span class="rotulo">Repita a senha</span><input type="password" name="senha2" required minlength="8" autocomplete="new-password"></label>
     <label class="campo"><span class="rotulo">E-mail para avisos de lead novo</span><input type="email" name="email" placeholder="opcional"></label>
     <?php if ($aviso): ?><p class="aviso"><?= h($aviso) ?></p><?php endif; ?>
@@ -234,11 +241,12 @@ function link_whatsapp(array $l): string {
 
 <?php elseif ($tela === 'login'): ?>
 <div class="acesso">
-  <form method="post">
+  <form method="post" action="/crm/" id="login">
     <p class="rotulo">Atendimentos</p>
     <h1>Nani Selestrim</h1>
     <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
-    <label class="campo"><span class="rotulo">Senha</span><input type="password" name="senha" required autofocus autocomplete="current-password"></label>
+    <label class="campo"><span class="rotulo">Usuário</span><input type="text" name="usuario" id="usuario" value="nani" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+    <label class="campo"><span class="rotulo">Senha</span><input type="password" name="senha" id="senha" required autofocus autocomplete="current-password"></label>
     <?php if ($aviso): ?><p class="aviso"><?= h($aviso) ?></p><?php endif; ?>
     <button class="botao cheio" type="submit">Entrar</button>
   </form>
@@ -273,7 +281,7 @@ function link_whatsapp(array $l): string {
       $tema = rotulo('tema', $l['tema']) . ($l['tema_outro'] ? ': ' . $l['tema_outro'] : '');
     ?>
     <details class="lead" id="lead-<?= (int) $l['id'] ?>">
-      <summary>
+      <summary><div class="cab">
         <span class="nome"><?= h($l['nome']) ?></span>
         <span class="quando"><?= h(quanto_tempo($l['criado_em'])) ?></span>
         <span class="resumo"><?= h($tema) ?></span>
@@ -283,7 +291,7 @@ function link_whatsapp(array $l): string {
           <span class="tag"><?= h(rotulo('contato', $l['contato'])) ?></span>
           <?php if ($l['relato']): ?><span class="tag">Escreveu relato</span><?php endif; ?>
         </span>
-      </summary>
+      </div></summary>
       <div class="corpo">
         <div class="acoes-rapidas">
           <a class="botao zap" href="<?= h(link_whatsapp($l)) ?>" target="_blank" rel="noopener">
@@ -334,6 +342,7 @@ function link_whatsapp(array $l): string {
     </form>
     <form method="post">
       <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+      <input type="text" name="usuario" value="nani" autocomplete="username" hidden>
       <label><span class="rotulo">Nova senha</span><input type="password" name="senha" minlength="8" autocomplete="new-password"></label>
       <label><span class="rotulo">Repita a nova senha</span><input type="password" name="senha2" minlength="8" autocomplete="new-password"></label>
       <button class="botao" name="acao" value="senha">Trocar senha</button>

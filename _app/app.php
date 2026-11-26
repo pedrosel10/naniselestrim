@@ -6,6 +6,11 @@ declare(strict_types=1);
 
 date_default_timezone_set('America/Sao_Paulo');
 
+// A hospedagem ainda roda PHP 7.4: funções do PHP 8 usadas aqui ganham versão própria
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $h, string $n): bool { return $n === '' || strncmp($h, $n, strlen($n)) === 0; }
+}
+
 function pasta_dados(): string {
     $env = getenv('NANI_DATA_DIR');
     if ($env) return rtrim($env, '/');
@@ -38,7 +43,9 @@ function salvar_config(array $c): void {
 function db(): PDO {
     static $pdo = null;
     if ($pdo) return $pdo;
-    $pdo = new PDO('sqlite:' . garantir_pasta() . '/crm.sqlite');
+    $arq = garantir_pasta() . '/crm.sqlite';
+    $pdo = new PDO('sqlite:' . $arq);
+    @chmod($arq, 0600);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $pdo->exec('PRAGMA journal_mode = WAL');
@@ -59,7 +66,36 @@ function db(): PDO {
         notas TEXT NOT NULL DEFAULT "",
         ip_hash TEXT
     )');
+    $pdo->exec('CREATE TABLE IF NOT EXISTS tentativas (ip_hash TEXT NOT NULL, em INTEGER NOT NULL)');
     return $pdo;
+}
+
+// Sessão guardada na pasta de dados (não na pasta temporária compartilhada do servidor)
+function iniciar_sessao(): void {
+    $dir = garantir_pasta() . '/sessoes';
+    if (!is_dir($dir)) @mkdir($dir, 0700, true);
+    if (is_dir($dir) && is_writable($dir)) session_save_path($dir);
+    $vida = 60 * 60 * 24 * 30;
+    ini_set('session.gc_maxlifetime', (string) $vida);
+    ini_set('session.use_strict_mode', '1');
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    session_name('nani_crm');
+    session_set_cookie_params(['lifetime' => $vida, 'path' => '/crm/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Strict']);
+    session_start();
+}
+
+// Bloqueio de força bruta: até 8 senhas erradas por endereço a cada 15 minutos
+function login_bloqueado(): bool {
+    $q = db()->prepare('SELECT COUNT(*) FROM tentativas WHERE ip_hash = ? AND em > ?');
+    $q->execute([ip_hash(), time() - 900]);
+    return (int) $q->fetchColumn() >= 8;
+}
+function registrar_falha(): void {
+    db()->prepare('INSERT INTO tentativas (ip_hash, em) VALUES (?, ?)')->execute([ip_hash(), time()]);
+    db()->prepare('DELETE FROM tentativas WHERE em < ?')->execute([time() - 86400]);
+}
+function limpar_falhas(): void {
+    db()->prepare('DELETE FROM tentativas WHERE ip_hash = ?')->execute([ip_hash()]);
 }
 
 // Rótulos legíveis para os valores salvos
@@ -112,8 +148,7 @@ function whatsapp_digitos(string $tel): string {
 }
 
 function ip_hash(): string {
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
-    $ip = trim(explode(',', $ip)[0]);
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
     return hash('sha256', $ip . '|nani-crm');
 }
 

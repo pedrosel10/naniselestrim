@@ -6,6 +6,7 @@ require __DIR__ . '/../_app/app.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
 
 function responder(int $status, array $corpo): void {
     http_response_code($status);
@@ -70,7 +71,7 @@ try {
 // Aviso por e-mail. O relato NÃO vai no e-mail, só fica no CRM.
 $cfg = config();
 if ($cfg && !empty($cfg['email_aviso'])) {
-    $host = $_SERVER['HTTP_HOST'] ?? 'naniselestrim.com';
+    $host = 'naniselestrim.com'; // fixo: não confiar no cabeçalho Host
     $tema = rotulo('tema', $lead['tema']) . ($lead['tema_outro'] ? ': ' . $lead['tema_outro'] : '');
     $corpo = "Novo pedido de atendimento pelo site.\n\n"
         . "Nome: {$lead['nome']}\n"
